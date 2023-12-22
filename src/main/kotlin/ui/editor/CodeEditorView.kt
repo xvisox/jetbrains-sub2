@@ -3,7 +3,7 @@ package ui.editor
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Divider
 import androidx.compose.runtime.*
-import ui.StatusBarView
+import ui.statusbar.StatusBarView
 import ui.code.CodeView
 import ui.common.Constants
 import ui.common.ReusableModifiers
