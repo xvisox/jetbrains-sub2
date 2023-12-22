@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 import ui.common.Constants
 import ui.common.ReusableModifiers
+import ui.editor.SyntaxTransformation
 
 @Composable
 fun CodeView(codeText: String, onCodeTextChange: (String) -> Unit) =
@@ -21,7 +22,8 @@ fun CodeView(codeText: String, onCodeTextChange: (String) -> Unit) =
             textStyle = TextStyle(
                 color = Constants.textColor,
                 fontFamily = FontFamily.Monospace,
-                fontSize = 15.sp
-            )
+                fontSize = 15.sp,
+            ),
+            visualTransformation = SyntaxTransformation(),
         )
     }
