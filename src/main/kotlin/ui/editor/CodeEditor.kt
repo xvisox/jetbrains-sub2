@@ -19,7 +19,7 @@ class CodeEditor {
         }
     }
 
-    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String, loading: (Boolean) -> Unit) =
+    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String, result: (Boolean, Int) -> Unit) =
         withContext(Dispatchers.IO) {
             val process = getKotlinScriptRunnerProcessBuilder(createTempFile(codeText)).start()
             val reader = getProcessOutputReader(process)
@@ -44,8 +44,7 @@ class CodeEditor {
                 mutex.withLock { buffer.add(line) }
             }
 
-            process.waitFor()
-            loading(false)
+            result(false, process.waitFor())
         }
 
     private fun getProcessOutputReader(process: Process) = BufferedReader(InputStreamReader(process.inputStream))
