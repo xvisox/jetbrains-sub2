@@ -1,42 +1,38 @@
 package ui.editor
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ui.common.Constants
 import ui.common.ReusableModifiers
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 @Composable
 fun CodeEditorView(codeEditor: CodeEditor) = Column {
-    var lines by remember { mutableStateOf("") }
+    val lines = remember { mutableStateListOf<String>() }
     // NavBarView
     Row(ReusableModifiers.navBarModifier) {
         Button(onClick = {
-            lines = ""
-            GlobalScope.launch {
-                val process = codeEditor.runKotlinScript(Constants.EXAMPLE_FILE_PATH).start()
-                val reader = BufferedReader(InputStreamReader(process.inputStream))
-
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    lines += line + "\n"
-                }
-
-                process.waitFor()
+            CoroutineScope(Dispatchers.Default).launch {
+                codeEditor.runKotlinScript(lines)
             }
         }) {
             Text("Button")
@@ -64,19 +60,24 @@ fun CodeEditorView(codeEditor: CodeEditor) = Column {
     Divider(ReusableModifiers.dividerModifier)
 
     // StatusBarView
-    Column(ReusableModifiers.statusBarModifier) {
-        Text("Read Data File")
-//        BasicTextField(
-//            value = lines,
-//            onValueChange = {},
-//            modifier = Modifier.fillMaxSize(),
-//            textStyle = TextStyle(
-//                color = Constants.codeEditorTextColor,
-//                fontFamily = FontFamily.Monospace,
-//                fontSize = 15.sp
-//            )
-//        )
-        Text(lines)
-    }
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(color = Color(180, 180, 180))
+            .padding(10.dp)
+    ) {
 
+        val state = rememberLazyListState()
+
+        LazyColumn(ReusableModifiers.statusBarModifier, state) {
+            items(lines) {
+                Text(it)
+            }
+        }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(
+                scrollState = state
+            )
+        )
+    }
 }
