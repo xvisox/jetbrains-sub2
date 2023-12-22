@@ -1,13 +1,11 @@
-package ui.editor
+package ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Divider
 import androidx.compose.runtime.*
-import ui.StatusBarView
-import ui.code.CodeView
 import ui.common.Constants
 import ui.common.ReusableModifiers
-import ui.navbar.NavBarView
+import ui.editor.CodeEditor
 
 @Composable
 fun CodeEditorView(codeEditor: CodeEditor) = Column {

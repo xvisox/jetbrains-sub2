@@ -19,32 +19,33 @@ class CodeEditor {
         }
     }
 
-    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String) = withContext(Dispatchers.IO) {
-        val process = getKotlinScriptRunnerProcessBuilder(createTempFile(codeText)).start()
-        val reader = getProcessOutputReader(process)
-        val buffer = mutableListOf<String>()
-        val mutex = Mutex(locked = false)
+    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String, result: (Boolean, Int) -> Unit) =
+        withContext(Dispatchers.IO) {
+            val process = getKotlinScriptRunnerProcessBuilder(createTempFile(codeText)).start()
+            val reader = getProcessOutputReader(process)
+            val buffer = mutableListOf<String>()
+            val mutex = Mutex(locked = false)
 
-        launch {
-            lines.clear()
-            while (isActive) {
-                delay(Constants.BATCH_UPDATE_INTERVAL)
-                mutex.withLock {
-                    withContext(Dispatchers.Default) {
-                        lines.addAll(buffer)
-                        buffer.clear()
+            launch {
+                lines.clear()
+                while (isActive) {
+                    delay(Constants.BATCH_UPDATE_INTERVAL)
+                    mutex.withLock {
+                        withContext(Dispatchers.Default) {
+                            lines.addAll(buffer)
+                            buffer.clear()
+                        }
                     }
                 }
             }
-        }
 
-        while (true) {
-            val line = reader.readLine() ?: break
-            mutex.withLock { buffer.add(line) }
-        }
+            while (true) {
+                val line = reader.readLine() ?: break
+                mutex.withLock { buffer.add(line) }
+            }
 
-        process.waitFor()
-    }
+            result(false, process.waitFor())
+        }
 
     private fun getProcessOutputReader(process: Process) = BufferedReader(InputStreamReader(process.inputStream))
 
