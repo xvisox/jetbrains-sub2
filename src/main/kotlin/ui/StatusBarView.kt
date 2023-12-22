@@ -1,4 +1,4 @@
-package ui.statusbar
+package ui
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
