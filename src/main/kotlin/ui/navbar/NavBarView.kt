@@ -14,14 +14,15 @@ import ui.common.ReusableModifiers
 import ui.editor.CodeEditor
 
 @Composable
-fun NavBarView(codeEditor: CodeEditor, lines: MutableList<String>) = Row(ReusableModifiers.navBarModifier) {
-    Button(
-        onClick = {
-            CoroutineScope(Dispatchers.Default).launch {
-                codeEditor.runKotlinScript(lines)
-            }
-        }, colors = ButtonDefaults.buttonColors(backgroundColor = Constants.runButtonColor)
-    ) {
-        Text("Run Code", fontSize = 20.sp)
+fun NavBarView(codeEditor: CodeEditor, lines: MutableList<String>, codeText: String) =
+    Row(ReusableModifiers.navBarModifier) {
+        Button(
+            onClick = {
+                CoroutineScope(Dispatchers.Default).launch {
+                    codeEditor.runKotlinScript(lines, codeText)
+                }
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = Constants.runButtonColor)
+        ) {
+            Text("Run Code", fontSize = 20.sp)
+        }
     }
-}
