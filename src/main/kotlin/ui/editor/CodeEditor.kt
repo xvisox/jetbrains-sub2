@@ -19,8 +19,8 @@ class CodeEditor {
         }
     }
 
-    suspend fun runKotlinScript(lines: MutableList<String>) = withContext(Dispatchers.IO) {
-        val process = getKotlinScriptRunnerProcessBuilder(Constants.EXAMPLE_FILE_PATH).start()
+    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String) = withContext(Dispatchers.IO) {
+        val process = getKotlinScriptRunnerProcessBuilder(createTempFile(codeText)).start()
         val reader = getProcessOutputReader(process)
         val buffer = mutableListOf<String>()
         val mutex = Mutex(locked = false)
@@ -32,8 +32,8 @@ class CodeEditor {
                 mutex.withLock {
                     withContext(Dispatchers.Default) {
                         lines.addAll(buffer)
+                        buffer.clear()
                     }
-                    buffer.clear()
                 }
             }
         }
@@ -47,6 +47,12 @@ class CodeEditor {
     }
 
     private fun getProcessOutputReader(process: Process) = BufferedReader(InputStreamReader(process.inputStream))
+
+    private fun createTempFile(codeText: String): String {
+        val tempFile = File.createTempFile(Constants.TEMP_FILE_PREFIX, Constants.TEMP_FILE_SUFFIX)
+        tempFile.writeText(codeText)
+        return tempFile.toPath().toString()
+    }
 
     private fun getKotlinScriptRunnerProcessBuilder(scriptFilePath: String): ProcessBuilder {
         val command = "${Constants.KOTLINC_SCRIPT_COMMAND}$scriptFilePath"

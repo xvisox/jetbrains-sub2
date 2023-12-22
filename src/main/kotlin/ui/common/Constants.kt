@@ -4,13 +4,16 @@ import androidx.compose.ui.graphics.Color
 
 class Constants {
     companion object {
-        // FIXME: move to properties file
         const val EXAMPLE_FILE_PATH = "./src/main/resources/example.main.kts"
         const val KOTLINC_SCRIPT_COMMAND = "kotlinc -script "
         const val BATCH_UPDATE_INTERVAL = 500L
-        val codeEditorBackgroundColor = Color(0xFF8C9A9E)
-        val codeEditorTextColor = Color(0xFF000000)
-        val navBarBackgroundColor = Color(0xFF747578)
-        val statusBarBackgroundColor = Color(0xFFD4F5F5)
+
+        const val TEMP_FILE_PREFIX = "temp"
+        const val TEMP_FILE_SUFFIX = ".main.kts"
+
+        val textColor = Color(0xFFD6D6D6)
+        val backgroundColor = Color(0xFF2E2E2E)
+        val runButtonColor = Color(0xFF72C349)
+        val navBarBackgroundColor = Color(0xFF21201E)
     }
 }

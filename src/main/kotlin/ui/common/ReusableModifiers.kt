@@ -12,23 +12,25 @@ import androidx.compose.ui.unit.dp
 class ReusableModifiers {
     companion object {
         val dividerModifier = Modifier
-            .height(3.dp)
+            .height(5.dp)
             .fillMaxWidth()
-            .background(color = Color.Black)
+            .background(color = Constants.backgroundColor.apply { copy(alpha = 0.5f) })
 
         val codeEditorModifier = Modifier
-            .background(color = Constants.codeEditorBackgroundColor)
+            .background(color = Constants.backgroundColor)
             .fillMaxWidth()
-            .height(700.dp)
+            .height(600.dp)
             .padding(16.dp)
 
         val navBarModifier = Modifier
+            .background(color = Constants.navBarBackgroundColor)
+            .padding(8.dp)
             .fillMaxWidth()
             .height(48.dp)
-            .background(color = Constants.navBarBackgroundColor)
 
         val statusBarModifier = Modifier
+            .background(color = Constants.backgroundColor)
+            .padding(16.dp)
             .fillMaxSize()
-            .background(color = Constants.statusBarBackgroundColor)
     }
 }
