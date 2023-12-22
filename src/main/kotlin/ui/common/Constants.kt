@@ -19,5 +19,6 @@ class Constants {
         val backgroundColor = Color(0xFF2E2E2E)
         val runButtonColor = Color(0xFF72C349)
         val navBarBackgroundColor = Color(0xFF21201E)
+        val syntaxRed = Color(0xFFF92672)
     }
 }
