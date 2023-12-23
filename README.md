@@ -27,3 +27,7 @@ cd jetbrains-sub2
 ```
 
 ## Demo:
+
+
+https://github.com/xvisox/jetbrains-sub2/assets/43937184/9d3f5573-c180-44bd-8fdf-e9a9d9d80c4b
+
