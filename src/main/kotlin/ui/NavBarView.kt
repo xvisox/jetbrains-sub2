@@ -76,11 +76,6 @@ fun NavBarView(codeEditor: CodeEditor, outputLines: MutableList<String>, codeTex
             )
         }
 
-        if (loading && batchSize > 1) {
-            LinearProgressIndicator(
-                currentProgress,
-                modifier = ReusableModifiers.linearProgressModifier
-            )
-        }
+        LinearProgressView(loading, batchSize, currentProgress)
     }
 
