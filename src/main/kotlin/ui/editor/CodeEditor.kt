@@ -8,21 +8,17 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.exp
 
 class CodeEditor {
 
-    // Exponential Weighted Moving Average (EWMA)
-    fun estimateRunningTime(previousElapsedTimes: DoubleArray, batchSize: Int, alpha: Double = 0.2): Double {
-        val weights = DoubleArray(previousElapsedTimes.size) { exp(-alpha * it) }
-        val sumOfWeights = weights.sum()
+    // Weighted Moving Average (WMA)
+    fun estimateRunningTimeSecs(previousElapsedTimes: LongArray, initialBatchSize: Int, batchSize: Int): Double {
+        val weights = (1..(initialBatchSize - batchSize)).map { it.toLong() }
 
-        for (i in weights.indices) {
-            weights[i] /= sumOfWeights
-        }
+        val estimatedRunningTime = previousElapsedTimes.zip(weights)
+            .sumOf { (elapsedTime, weight) -> elapsedTime * weight }
 
-        val estimatedRunningTime = previousElapsedTimes.zip(weights).sumOf { it.first * it.second }
-        return estimatedRunningTime / 1000.0 * batchSize
+        return estimatedRunningTime.times(batchSize) / (1000.0 * weights.sum())
     }
 
     fun getFileContent(filePath: String): String {
@@ -30,7 +26,7 @@ class CodeEditor {
             File(filePath).readText()
         } catch (e: Exception) {
             e.printStackTrace()
-            "Initial text"
+            Constants.INVALID_FILE_PATH_MESSAGE
         }
     }
 
@@ -73,7 +69,7 @@ class CodeEditor {
     }
 
     private fun getKotlinScriptRunnerProcessBuilder(scriptFilePath: String): ProcessBuilder {
-        val command = "${Constants.KOTLINC_SCRIPT_COMMAND}$scriptFilePath"
+        val command = "${Constants.KOTLINC_SCRIPT_COMMAND}${scriptFilePath}"
 
         val processBuilder = ProcessBuilder()
         processBuilder.command("bash", "-c", command)

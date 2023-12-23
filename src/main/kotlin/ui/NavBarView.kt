@@ -28,15 +28,17 @@ fun NavBarView(codeEditor: CodeEditor, lines: MutableList<String>, codeText: Str
         Row(ReusableModifiers.navBarModifier) {
             Button(
                 onClick = {
-                    val previousElapsedTimes = DoubleArray(batchSize); loading = true
+                    val previousElapsedTimes = LongArray(batchSize); loading = true
                     CoroutineScope(Dispatchers.Default).launch {
                         for (i in 1..batchSize) {
                             val elapsedTime = measureTimeMillis {
                                 codeEditor.runKotlinScript(lines, codeText) { result = it }
                             }
                             currentProgress = i.toFloat() / batchSize
-                            previousElapsedTimes[i - 1] = elapsedTime.toDouble()
-                            estimatedRunningTime = codeEditor.estimateRunningTime(previousElapsedTimes, batchSize - i)
+                            previousElapsedTimes[i - 1] = elapsedTime
+                            estimatedRunningTime = codeEditor.estimateRunningTimeSecs(
+                                previousElapsedTimes, batchSize, batchSize - i
+                            )
                         }
                         loading = false; currentProgress = 0f; estimatedRunningTime = 0.0
                     }

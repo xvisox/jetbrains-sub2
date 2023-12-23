@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 class Constants {
     companion object {
         const val EXAMPLE_FILE_PATH = "./src/main/resources/example.main.kts"
+        const val INVALID_FILE_PATH_MESSAGE = "Invalid file path"
         const val KOTLINC_SCRIPT_COMMAND = "kotlinc -script "
         const val BATCH_UPDATE_INTERVAL = 500L
 
