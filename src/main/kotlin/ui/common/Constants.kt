@@ -14,6 +14,7 @@ class Constants {
         const val BATCH_SIZE = "Batch run size"
         const val RUN_CODE = "Run Code"
         const val EXIT_CODE = "Exit code: "
+        const val ESTIMATED_RUNNING_TIME = "Estimated running time: "
 
         val textColor = Color(0xFFD6D6D6)
         val failTextColor = Color(0xFFE57373)

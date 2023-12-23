@@ -8,8 +8,22 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.exp
 
 class CodeEditor {
+
+    // Exponential Weighted Moving Average (EWMA)
+    fun estimateRunningTime(previousElapsedTimes: DoubleArray, batchSize: Int, alpha: Double = 0.2): Double {
+        val weights = DoubleArray(previousElapsedTimes.size) { exp(-alpha * it) }
+        val sumOfWeights = weights.sum()
+
+        for (i in weights.indices) {
+            weights[i] /= sumOfWeights
+        }
+
+        val estimatedRunningTime = previousElapsedTimes.zip(weights).sumOf { it.first * it.second }
+        return estimatedRunningTime / 1000.0 * batchSize
+    }
 
     fun getFileContent(filePath: String): String {
         return try {
