@@ -17,7 +17,7 @@ import ui.editor.CodeEditor
 import kotlin.system.measureTimeMillis
 
 @Composable
-fun NavBarView(codeEditor: CodeEditor, lines: MutableList<String>, codeText: String) =
+fun NavBarView(codeEditor: CodeEditor, outputLines: MutableList<String>, codeText: String) =
     Column {
         var loading by remember { mutableStateOf(false) }
         var currentProgress by remember { mutableStateOf(0f) }
@@ -32,7 +32,7 @@ fun NavBarView(codeEditor: CodeEditor, lines: MutableList<String>, codeText: Str
                     CoroutineScope(Dispatchers.Default).launch {
                         for (i in 1..batchSize) {
                             val elapsedTime = measureTimeMillis {
-                                codeEditor.runKotlinScript(lines, codeText) { result = it }
+                                codeEditor.runKotlinScript(outputLines, codeText) { result = it }
                             }
                             currentProgress = i.toFloat() / batchSize
                             previousElapsedTimes[i - 1] = elapsedTime

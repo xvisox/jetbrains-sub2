@@ -30,7 +30,7 @@ class CodeEditor {
         }
     }
 
-    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String, result: (Int) -> Unit) =
+    suspend fun runKotlinScript(outputLines: MutableList<String>, codeText: String, result: (Int) -> Unit) =
         withContext(Dispatchers.IO) {
             val process = getKotlinScriptRunnerProcessBuilder(createTempFile(codeText)).start()
             val reader = getProcessOutputReader(process)
@@ -39,12 +39,12 @@ class CodeEditor {
             val running = AtomicBoolean(true)
 
             launch {
-                lines.clear()
+                outputLines.clear()
                 while (running.get()) {
                     delay(Constants.BATCH_UPDATE_INTERVAL)
                     mutex.withLock {
                         withContext(Dispatchers.Default) {
-                            lines.addAll(buffer)
+                            outputLines.addAll(buffer)
                             buffer.clear()
                         }
                     }
