@@ -20,9 +20,9 @@ class ReusableModifiers {
 
         val navBarModifier = Modifier
             .background(color = Constants.navBarBackgroundColor)
-            .padding(8.dp)
+            .padding(12.dp)
             .fillMaxWidth()
-            .height(48.dp)
+            .height(60.dp)
 
         val statusBarModifier = Modifier
             .background(color = Constants.backgroundColor)
@@ -30,7 +30,10 @@ class ReusableModifiers {
             .fillMaxSize()
 
         val circularProgressModifier = Modifier
-            .width(40.dp)
+            .width(56.dp)
             .padding(start = 10.dp, top = 10.dp)
+
+        val linearProgressModifier = Modifier
+            .fillMaxWidth()
     }
 }

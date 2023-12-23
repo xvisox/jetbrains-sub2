@@ -7,32 +7,44 @@ import ui.common.Constants
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.util.concurrent.atomic.AtomicBoolean
 
 class CodeEditor {
+
+    // Weighted Moving Average (WMA)
+    fun estimateRunningTimeSecs(previousElapsedTimes: LongArray, initialBatchSize: Int, batchSize: Int): Double {
+        val weights = (1..(initialBatchSize - batchSize)).map { it.toLong() }
+
+        val estimatedRunningTime = previousElapsedTimes.zip(weights)
+            .sumOf { (elapsedTime, weight) -> elapsedTime * weight }
+
+        return estimatedRunningTime.times(batchSize) / (1000.0 * weights.sum())
+    }
 
     fun getFileContent(filePath: String): String {
         return try {
             File(filePath).readText()
         } catch (e: Exception) {
             e.printStackTrace()
-            "Initial text"
+            Constants.INVALID_FILE_PATH_MESSAGE
         }
     }
 
-    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String, result: (Boolean, Int) -> Unit) =
+    suspend fun runKotlinScript(outputLines: MutableList<String>, codeText: String, result: (Int) -> Unit) =
         withContext(Dispatchers.IO) {
             val process = getKotlinScriptRunnerProcessBuilder(createTempFile(codeText)).start()
             val reader = getProcessOutputReader(process)
             val buffer = mutableListOf<String>()
             val mutex = Mutex(locked = false)
+            val running = AtomicBoolean(true)
 
             launch {
-                lines.clear()
-                while (isActive) {
+                outputLines.clear()
+                while (running.get()) {
                     delay(Constants.BATCH_UPDATE_INTERVAL)
                     mutex.withLock {
                         withContext(Dispatchers.Default) {
-                            lines.addAll(buffer)
+                            outputLines.addAll(buffer)
                             buffer.clear()
                         }
                     }
@@ -44,7 +56,8 @@ class CodeEditor {
                 mutex.withLock { buffer.add(line) }
             }
 
-            result(false, process.waitFor())
+            running.set(false)
+            result(process.waitFor())
         }
 
     private fun getProcessOutputReader(process: Process) = BufferedReader(InputStreamReader(process.inputStream))
@@ -56,7 +69,7 @@ class CodeEditor {
     }
 
     private fun getKotlinScriptRunnerProcessBuilder(scriptFilePath: String): ProcessBuilder {
-        val command = "${Constants.KOTLINC_SCRIPT_COMMAND}$scriptFilePath"
+        val command = "${Constants.KOTLINC_SCRIPT_COMMAND}${scriptFilePath}"
 
         val processBuilder = ProcessBuilder()
         processBuilder.command("bash", "-c", command)
