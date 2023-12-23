@@ -1,20 +1,13 @@
 #!/usr/bin/env kotlin
 
-@file:DependsOn("org.jetbrains.kotlinx:kotlinx-html-jvm:0.8.0")
-
-import kotlinx.html.*;
-import kotlinx.html.stream.*;
-import kotlinx.html.attributes.*
-
-val addressee = args.firstOrNull() ?: "World"
-
-print(createHTML().html {
-    body {
-        h1 { +"Hello, $addressee!" }
+fun fibonacci(n: Int): Int {
+    return if (n <= 1) {
+        n
+    } else {
+        fibonacci(n - 1) + fibonacci(n - 2)
     }
-})
-
-for (i in 1..1_000_000) {
-    println(i)
 }
 
+val n = 10
+val result = fibonacci(n) // terrible implementation
+println("The $n-th Fibonacci number is: $result")

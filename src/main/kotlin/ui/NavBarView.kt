@@ -59,12 +59,14 @@ fun NavBarView(codeEditor: CodeEditor, outputLines: MutableList<String>, codeTex
                 )
             } else {
                 CircularProgressIndicator(ReusableModifiers.circularProgressModifier)
-                Text(
-                    "${Constants.ESTIMATED_RUNNING_TIME}${String.format("%.2f", estimatedRunningTime)}s",
-                    fontSize = 32.sp,
-                    color = Constants.textColor,
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(start = 20.dp)
-                )
+                if (batchSize > 1) {
+                    Text(
+                        "${Constants.ESTIMATED_RUNNING_TIME}${String.format("%.2f", estimatedRunningTime)}s",
+                        fontSize = 32.sp,
+                        color = Constants.textColor,
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(start = 20.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -76,11 +78,6 @@ fun NavBarView(codeEditor: CodeEditor, outputLines: MutableList<String>, codeTex
             )
         }
 
-        if (loading && batchSize > 1) {
-            LinearProgressIndicator(
-                currentProgress,
-                modifier = ReusableModifiers.linearProgressModifier
-            )
-        }
+        LinearProgressView(loading, batchSize, currentProgress)
     }
 
