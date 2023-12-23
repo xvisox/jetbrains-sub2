@@ -16,4 +16,5 @@ enum class SyntaxKeyword(val keyword: String, val color: Color) {
     IMPORT("import", Constants.syntaxRed),
     VAL("val", Constants.syntaxRed),
     VAR("var", Constants.syntaxRed),
+    RETURN("return", Constants.syntaxRed),
 }
