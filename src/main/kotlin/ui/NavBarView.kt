@@ -28,9 +28,8 @@ fun NavBarView(codeEditor: CodeEditor, lines: MutableList<String>, codeText: Str
             onClick = {
                 loading = true
                 CoroutineScope(Dispatchers.Default).launch {
-                    codeEditor.runKotlinScript(lines, codeText) { p1, p2 ->
-                        loading = p1; result = p2
-                    }
+                    codeEditor.runKotlinScript(lines, codeText) { result = it }
+                    loading = false
                 }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Constants.runButtonColor),

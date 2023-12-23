@@ -7,6 +7,7 @@ import ui.common.Constants
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.util.concurrent.atomic.AtomicBoolean
 
 class CodeEditor {
 
@@ -19,16 +20,17 @@ class CodeEditor {
         }
     }
 
-    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String, result: (Boolean, Int) -> Unit) =
+    suspend fun runKotlinScript(lines: MutableList<String>, codeText: String, result: (Int) -> Unit) =
         withContext(Dispatchers.IO) {
             val process = getKotlinScriptRunnerProcessBuilder(createTempFile(codeText)).start()
             val reader = getProcessOutputReader(process)
             val buffer = mutableListOf<String>()
             val mutex = Mutex(locked = false)
+            val running = AtomicBoolean(true)
 
             launch {
                 lines.clear()
-                while (isActive) {
+                while (running.get()) {
                     delay(Constants.BATCH_UPDATE_INTERVAL)
                     mutex.withLock {
                         withContext(Dispatchers.Default) {
@@ -44,7 +46,8 @@ class CodeEditor {
                 mutex.withLock { buffer.add(line) }
             }
 
-            result(false, process.waitFor())
+            running.set(false)
+            result(process.waitFor())
         }
 
     private fun getProcessOutputReader(process: Process) = BufferedReader(InputStreamReader(process.inputStream))
